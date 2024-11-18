@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Policy Diff</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <style>
+        .dialog, .error {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 150%);
+            transition: all .25s ease-in-out;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .dialog.show, .error.show {
+            opacity: 1;
+            transform: translate(-50%, 50%);
+            visibility: visible;
+        }
+    </style>
+    <div class="container mt-8 px-2 mx-auto md:w-3/4">
+        <div class="app">
+            <div class="header my-4 flex items-center">
+                <div class="rounded-lg overflow-hidden w-8 mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" class="w-full">
+                        <defs>
+                            <radialGradient id="a" cx="352" cy="352" r="512" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3a2a1d"/>
+                                <stop offset="1" stop-color="#241405"/>
+                            </radialGradient>
+                        </defs>
+                        <path fill="url(#a)" d="M0 0h1024v1024H0z"/>
+                        <path fill="#ff7618" d="M71 512c0 243.6 197.4 441 441 441s441-197.4 441-441S755.6 71 512 71 71 268.4 71 512zm45-.5c.3-218.7 177.8-395.8 396.5-395.5S908.3 293.8 908 512.5 730.5 908 512 908 115.9 730.4 116 511.6z"/>
+                        <path fill="#ffe0cb" d="M787 512a96.5 96.5 0 0 0-54.3-86.7 102.4 102.4 0 0 0-134-134 96.4 96.4 0 0 0-173.4 0 102.4 102.4 0 0 0-134 134 96.4 96.4 0 0 0 0 173.4 102.4 102.4 0 0 0 134 134 96.4 96.4 0 0 0 173.4 0 102.4 102.4 0 0 0 134-134A96.5 96.5 0 0 0 787 512zm-94.7-180.3a76.6 76.6 0 0 1 15.5 85.5 97.4 97.4 0 0 0-17.2-1.6 82.3 82.3 0 0 1-82.2-82.2 97.4 97.4 0 0 0-1.6-17.2 76.6 76.6 0 0 1 85.5 15.5zm-98.6 368.5a86.4 86.4 0 0 1-9.3-7.9 102.4 102.4 0 0 0-144.8 0 86.4 86.4 0 0 1-9.3 7.9 75 75 0 0 1-.6-9.6 96.4 96.4 0 0 0-96.3-96.3 75 75 0 0 1-9.6-.6 86.4 86.4 0 0 1 7.9-9.3 102.4 102.4 0 0 0 0-144.8 86.4 86.4 0 0 1-7.9-9.3 75 75 0 0 1 9.6-.6 96.4 96.4 0 0 0 96.3-96.3 75 75 0 0 1 .6-9.6 86.4 86.4 0 0 1 9.3 7.9 102.4 102.4 0 0 0 144.8 0 86.4 86.4 0 0 1 9.3-7.9 75 75 0 0 1 .6 9.6 96.4 96.4 0 0 0 96.3 96.3 75 75 0 0 1 9.6.6 86.4 86.4 0 0 1-7.9 9.3 102.4 102.4 0 0 0 0 144.8 86.4 86.4 0 0 1 7.9 9.3 75 75 0 0 1-9.6.6 96.4 96.4 0 0 0-96.3 96.3 75 75 0 0 1-.6 9.6zM512 251.1a82.3 82.3 0 0 1 74.1 46.5 103.6 103.6 0 0 0-20.2 15.7 76.3 76.3 0 0 1-107.8 0 103.6 103.6 0 0 0-20.2-15.7 82.3 82.3 0 0 1 74.1-46.5zm-180.3 80.6a76.6 76.6 0 0 1 85.5-15.5 97.4 97.4 0 0 0-1.6 17.2 82.3 82.3 0 0 1-82.2 82.2 97.4 97.4 0 0 0-17.2 1.6 76.6 76.6 0 0 1 15.5-85.5zM251.1 512a82.3 82.3 0 0 1 46.5-74.1 103.6 103.6 0 0 0 15.7 20.2 76.3 76.3 0 0 1 0 107.8 103.6 103.6 0 0 0-15.7 20.2 82.3 82.3 0 0 1-46.5-74.1zm80.6 180.3a76.6 76.6 0 0 1-15.5-85.5 97.4 97.4 0 0 0 17.2 1.6 82.3 82.3 0 0 1 82.2 82.2 97.4 97.4 0 0 0 1.6 17.2 76.6 76.6 0 0 1-85.5-15.5zM512 772.9a82.3 82.3 0 0 1-74.1-46.5 103.6 103.6 0 0 0 20.2-15.7 76.3 76.3 0 0 1 107.8 0 103.6 103.6 0 0 0 20.2 15.7 82.3 82.3 0 0 1-74.1 46.5zm180.3-80.6a76.6 76.6 0 0 1-85.5 15.5 97.4 97.4 0 0 0 1.6-17.2 82.3 82.3 0 0 1 82.2-82.2 97.4 97.4 0 0 0 17.2-1.6 76.6 76.6 0 0 1-15.5 85.5zm34.1-106.2a103.6 103.6 0 0 0-15.7-20.2 76.3 76.3 0 0 1 0-107.8 103.6 103.6 0 0 0 15.7-20.2 82.3 82.3 0 0 1 0 148.2z"/>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold">Policy Diff</h1>
+            </div>
+            <div class="main md:grid md:gap-2 md:grid-cols-2 md:grid-rows-1"
+                x-data="{
+                    before: '/apps/labcorp/content/cards,/apps/labcorp/content/cardcontainer,/apps/labcorp/content/testmenu,/apps/labcorp/content/testmenudetails',
+                    after: '/apps/labcorp/content/cards,/apps/labcorp/content/cardcontainer,/apps/labcorp/content/testmenudetails,/apps/labcorp/content/videomodal',
+                    list: [], // List that gets condensed into the final list string
+                    draftList: [], // Dummy list that the user will interact with
+                    added: [],
+                    deleted: [],
+                    finalList: '',
+                    sort: 0,
+                    sortOptions: ['none', 'az', 'za'],
+                    originalOrder: [],
+                    reset() {
+                        this.before = '';
+                        this.after = '';
+                        this.list = [];
+                        this.draftList = [];
+                        this.added = [];
+                        this.deleted = [];
+                        this.finalList = '';
+                    },
+                    submit() {
+                        let self = this;
+                        if (!self.before || !self.after) {
+                            alert('Please make sure the before or after fields are filled out.');
+                            return;
+                        }
+                        let beforeArr = self.before.split(',');
+                        let afterArr = self.after.split(',');
+                        self.added = [...afterArr.filter(i => !beforeArr.includes(i))];
+                        self.deleted = [...beforeArr.filter(i => !afterArr.includes(i))];
+                        self.draftList = [...new Set(beforeArr.concat(afterArr))];
+                        self.list = self.draftList.map(i => { 
+                            return {
+                                policy: i, 
+                                checked: !self.deleted.includes(i)
+                            }
+                        })
+                    },
+                    handleCheckbox(index, e) {
+                        let self = this;
+                        let policy = e.target.value;
+                        if (e.target.checked) {
+                            let searchResult = self.list.findIndex(i => i.policy == policy);
+                            self.list[searchResult].checked = true;
+                        } else {
+                            let searchResult = self.list.findIndex(i => i.policy == policy);
+                            self.list[searchResult].checked = false;
+                        }
+                    },
+                    updateFinalList() {
+                        let self = this;
+                        self.finalList = self.list.filter(i => i.checked).map(i => i.policy).join(',');
+                    },
+                    swap() {
+                        let self = this;
+                        let a = self.before;
+                        let b = self.after;
+                        self.reset();
+                        self.before = b;
+                        self.after = a;
+                        self.submit()
+                    },
+                    copytext() {
+                        let self = this;
+                        let dialog = document.querySelector('.dialog');
+                        let error = document.querySelector('.error');
+                        if (dialog.classList.contains('show') || error.classList.contains('show')) return;
+
+                        navigator.clipboard.writeText(self.finalList)
+                            .then(() => {
+                                console.log('Text copied to clipboard');
+                                dialog.classList.add('show');
+                                setTimeout(function() {
+                                    dialog.classList.remove('show');
+                                },1500);
+                            })
+                            .catch(err => {
+                                console.error('Failed to copy: ', err);
+                                error.classList.add('show');
+                                setTimeout(function() {
+                                    error.classList.remove('show');
+                                },1500);
+                            });
+                    },
+                    toggleSort() {
+                        let self = this;
+                        if (!self.originalOrder.length) {
+                            self.originalOrder = [...self.draftList];
+                        }
+                        self.sort = self.sort + 1 < self.sortOptions.length ? self.sort + 1 : 0;
+                        switch (self.sort) {
+                            case 1:
+                                self.draftList = self.draftList.sort();
+                                break;
+                            case 2:
+                                self.draftList = self.draftList.sort().reverse();
+                                break;
+                            case 0:
+                                self.draftList = [...self.originalOrder];
+                                break;
+                        }
+                        self.list = self.draftList.map(i => { 
+                            return {
+                                policy: i, 
+                                checked: !self.deleted.includes(i)
+                            }
+                        })
+                    }
+                }"
+                x-effect="updateFinalList()">
+                <div class="input border border-solid p-4 rounded-lg flex flex-col">
+                    <div class="mb-2">
+                        <label for="before" class="mb-2 inline-block">Before</label>
+                        <textarea class="border border-solid rounded-lg p-4 w-full text-sm min-h-24" name="before" id="before" placeholder="/apps/project/content/component,/apps/project/content/component ..." x-model="before"></textarea>
+                    </div>
+                    <div class="w-full relative">
+                        <button @click="swap" x-bind:disabled="!before || !after" class="absolute right-0 flex items-center justify-center border border-solid rounded-lg p-2 hover:bg-slate-100 transition ease-in-out delay-75 disabled:bg-slate-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="block w-4 relative" style="left: 4px">
+                                <path d="M145.6 7.7C141 2.8 134.7 0 128 0s-13 2.8-17.6 7.7l-104 112c-6.5 7-8.2 17.2-4.4 25.9S14.5 160 24 160l56 0 0 192-56 0c-9.5 0-18.2 5.7-22 14.4s-2.1 18.9 4.4 25.9l104 112c4.5 4.9 10.9 7.7 17.6 7.7s13-2.8 17.6-7.7l104-112c6.5-7 8.2-17.2 4.4-25.9s-12.5-14.4-22-14.4l-56 0 0-192 56 0c9.5 0 18.2-5.7 22-14.4s2.1-18.9-4.4-25.9l-104-112z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="my-4 w-full">
+                        <label for="after" class="mb-2 inline-block">After</label>
+                        <textarea class="border border-solid rounded-lg p-4 w-full text-sm min-h-24" name="after" id="after" placeholder="/apps/project/content/component,/apps/project/content/component ..." x-model="after"></textarea>
+                    </div>
+                    <div class="border border-solid rounded-lg p-4 mb-4 h-full" x-show="draftList.length">
+                        <h2 class="font-semibold mb-2">Summary</h2>
+                        <ul class="list">
+                            <template x-for="(item, index) in added">
+                                <li :key="index" class="py-1 text-green-600 font-bold text-sm">+ <span x-text="item"></span></li>
+                            </template>
+                            <template x-for="(item, index) in deleted">
+                                <li :key="index" class="py-1 text-red-400 font-bold text-sm">- <span x-text="item"></span></li>
+                            </template>
+                        </ul>
+                    </div>
+                    <div class="mt-auto">
+                        <button @click="submit" x-bind:disabled="!before || !after" class="border border-solid rounded-lg px-4 py-2 ml-auto hover:bg-slate-100 transition ease-in-out delay-75 disabled:bg-slate-100">Compare</button>
+                        <button @click="reset" x-show="draftList.length" class="border border-solid rounded-lg px-4 py-2 ml-auto hover:bg-slate-100 transition ease-in-out delay-75">Clear</button>
+                    </div>
+                </div>
+                <div class="view border border-solid p-4 rounded-lg flex flex-col relative" x-show="draftList.length">
+                    <div class="relative">
+                        <label for="before" class="mb-2 inline-block">Policy</label>
+                        <button @click="toggleSort" class="absolute right-0 top-0 flex items-center justify-center border border-solid rounded-lg p-2 hover:bg-slate-100 transition ease-in-out delay-75 disabled:bg-slate-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="block w-2 relative">
+                                <path x-show="sort == 0" d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128zm0 429.3l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128c-12.5 12.5-32.8 12.5-45.3 0z"/>
+                                <path x-show="sort == 1" d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z"/>
+                                <path x-show="sort == 2" d="M182.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8l256 0c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z"/>
+                            </svg>
+
+
+                        </button>
+                    </div>
+                    <ul>
+                        <template x-for="(item, index) in draftList">
+                            <li :key="index" class="pb-1">
+                                <label class="text-sm">
+                                    <input @click="handleCheckbox(index, $event)" type="checkbox" class="mr-2" x-bind:value="item" x-bind:checked="!deleted.includes(item)">
+                                    <span :class="{'text-red-400 font-bold' : deleted.includes(item), 'text-green-600 font-bold' : added.includes(item)}" x-text="item"></span>
+                                </label>
+                            </li>
+                        </template>
+                    </ul>
+                    <textarea x-show="draftList.length" readonly type="text" class="h-full border border-solid rounded-lg p-4 mt-2 w-full text-sm h-100" x-model="finalList"></textarea>
+                    <button @click="copytext" x-show="finalList" class="mr-auto flex mt-2 border border-solid rounded-lg px-4 py-2 hover:bg-slate-100 transition ease-in-out delay-75 bg-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="block w-4 mr-2">
+                            <path d="M384 336l-192 0c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l140.1 0L400 115.9 400 320c0 8.8-7.2 16-16 16zM192 384l192 0c35.3 0 64-28.7 64-64l0-204.1c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1L192 0c-35.3 0-64 28.7-64 64l0 256c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64L0 448c0 35.3 28.7 64 64 64l192 0c35.3 0 64-28.7 64-64l0-32-48 0 0 32c0 8.8-7.2 16-16 16L64 464c-8.8 0-16-7.2-16-16l0-256c0-8.8 7.2-16 16-16l32 0 0-48-32 0z"/>
+                        </svg>
+                        Copy
+                    </button>
+                    <div class="absolute bg-white w-1/2 text-center p-4 border border-solid rounded-lg flex items-center justify-center dialog">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6 mr-2 block">
+                            <path fill="rgb(22 163 74 / var(--tw-text-opacity, 1))" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/>
+                        </svg>
+                        Copied!
+                    </div>
+                    <div class="absolute bg-white w-3/4 text-center p-4 border border-solid rounded-lg flex items-center justify-center error">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6 mr-2 block">
+                            <path fill="rgb(248 113 113 / var(--tw-text-opacity, 1))" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z"/>
+                        </svg>
+                        Something went wrong!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+</html>
